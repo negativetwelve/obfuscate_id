@@ -63,8 +63,8 @@ module ObfuscateId
     def reload(options = nil)
       actual_id = self.id
       self.id = to_param
-      super(options).tap do
-        self.id = actual_id
+      super(options).tap do |object|
+        object.id = actual_id
       end
     end
 
