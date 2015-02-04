@@ -3,7 +3,7 @@ module ObfuscateId
   def obfuscate_id(options = {})
     require 'scatter_swap'
 
-    extend ClassMethods 
+    extend ClassMethods
     include InstanceMethods
     cattr_accessor :obfuscate_id_spin
     self.obfuscate_id_spin = (options[:spin] || obfuscate_id_default_spin)
@@ -44,7 +44,7 @@ module ObfuscateId
     # This makes it easy to drop obfuscate_id onto any model
     # and produce different obfuscated ids for different models
     def obfuscate_id_default_spin
-      alphabet = Array("a".."z") 
+      alphabet = Array("a".."z")
       number = name.split("").collect do |char|
         alphabet.index(char)
       end
@@ -61,8 +61,11 @@ module ObfuscateId
     # As ActiveRecord::Persistence#reload uses self.id
     # reload without deobfuscating
     def reload(options = nil)
-      options = (options || {}).merge(:no_obfuscated_id => true)
-      super(options)
+      actual_id = self.id
+      self.id = to_param
+      super(options).tap do
+        self.id = actual_id
+      end
     end
 
     def deobfuscate_id(obfuscated_id)
