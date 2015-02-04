@@ -22,7 +22,7 @@ module ObfuscateId
     def find(*args)
       scope = args.slice!(0)
       options = args.slice!(0) || {}
-      if has_obfuscated_id? && !options[:no_obfuscated_id]
+      if has_obfuscated_id?
         if scope.is_a?(Array)
           scope.map! {|a| deobfuscate_id(a).to_i}
         else
@@ -62,7 +62,7 @@ module ObfuscateId
     # reload without deobfuscating
     def reload(options = nil)
       actual_id = self.id
-      self.id = to_param
+      self.id = self.to_param
       super(options).tap do |object|
         object.id = actual_id
       end
